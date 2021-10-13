@@ -7,10 +7,10 @@ get tweets by text
 
 #Tony
 c = twint.Config()
-c.Search = ['Meng Wan Zhou']       # topic
+c.Search = 'Meng Wan Zhou'       # topic
 c.Limit = 500      # number of Tweets to scrape
 c.Store_csv = True       # store tweets in a json file
-c.Show_hashtags = True
+# c.Show_hashtags = True
 c.Output = "./output/MengWZ.csv"     # path to json file
 
 twint.run.Search(c)
