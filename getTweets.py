@@ -1,28 +1,33 @@
 import twint
 
+def main()
 
+    # Terms we want to scrape
+    search_keys = ["Huawei", "5G", "cyber security", "cybersecurity", "China Canada trade", "Canada China trade", "Canada China relationship", "China Canada relationship"]
 
-search_keys = ["Huawei", "5G", "cyber security", "cybersecurity", "China Canada trade", "Canada China trade", "Canada China relationship", "China Canada relationship"]
+    # Add hashtag version of all search_keys to search_keys
+    for i in range(len(search_keys)):
+        
+        key = search_keys[i].replace(" ", "")
+        
+        if "#" + key not in search_keys:
+            search_keys.append ( "#" + key)
 
-for i in range(len(search_keys)):
     
-    key = search_keys[i].replace(" ", "")
-    
-    if "#" + key not in search_keys:
-    
-        search_keys.append ( "#" + key)
+    # Scrape for each
+    for key in search_keys:
+        c = twint.Config()
+        c.Search = key       # topic
+        c.Limit = 500      # number of Tweets to scrape
+        c.Store_csv = True       # store tweets in a json file
+        # c.Show_hashtags = True
+        c.Near = "Toronto"
+        c.Output = "./output/" + key + ".csv"     # path to csv 
+        twint.run.Search(c)
+        
+if __name__ == "__main__":
+    main()
 
-
-
-for key in search_keys:
-    c = twint.Config()
-    c.Search = key       # topic
-    c.Limit = 500      # number of Tweets to scrape
-    c.Store_csv = True       # store tweets in a json file
-    # c.Show_hashtags = True
-    c.Near = "Toronto"
-    c.Output = "./output/" + key + ".csv"     # path to csv 
-    twint.run.Search(c)
 """
 
 '''
