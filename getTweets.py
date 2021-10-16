@@ -1,6 +1,30 @@
 import twint
 
+
+
+search_keys = ["Huawei", "5G", "cyber security", "cybersecurity", "China Canada trade", "Canada China trade", "Canada China relationship", "China Canada relationship"]
+
+for i in range(len(search_keys)):
+    
+    key = search_keys[i].replace(" ", "")
+    
+    if "#" + key not in search_keys:
+    
+        search_keys.append ( "#" + key)
+
+
+
+for key in search_keys:
+    c = twint.Config()
+    c.Search = key       # topic
+    c.Limit = 500      # number of Tweets to scrape
+    c.Store_csv = True       # store tweets in a json file
+    # c.Show_hashtags = True
+    c.Near = "Toronto"
+    c.Output = "./output/" + key + ".csv"     # path to csv 
+    twint.run.Search(c)
 """
+
 '''
 get tweets by text
 '''
@@ -35,7 +59,7 @@ get tweets by hashtag
 '''
 get tweets by user
 '''
-"""
+
 #Veronica
 c = twint.Config()
 c.Username = 'WhiteHouse'       # username
@@ -55,3 +79,4 @@ c.Show_hashtags = True
 c.Output = "./output/cbcnewsbc.csv"     # path to csv file
 
 twint.run.Search(c)
+"""
