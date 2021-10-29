@@ -1,6 +1,17 @@
 import twint
+import csv
 
-def main()
+def getLocations():
+    geoLocations = []
+    with open("canadacities.csv") as cities:
+        reader = csv.DictReader(cities)
+        for row in reader:
+            geoLocations.append(f"{row['lat']}, {row['lng']}, 8km")
+        return geoLocations
+
+def main():
+    geoLocations = getLocations()
+    print(geoLocations)
 
     # Terms we want to scrape
     search_keys = ["Huawei", "5G", "cyber security", "cybersecurity", "China Canada trade", "Canada China trade", "Canada China relationship", "China Canada relationship"]
