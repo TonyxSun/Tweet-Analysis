@@ -1,6 +1,7 @@
 import twint
 import csv
 
+
 def getLocations(loc):
     geoLocations = []
     if loc == "CA":
@@ -27,7 +28,7 @@ def addHashtags(keys):
             keys.append ( "#" + key)
     return keys
 
-def scrapeTweets(search_keys, country, geoCoords):
+def scrapeTweetsbyLoc(search_keys, country, geoCoords):
     # Scrape for each
     for key in search_keys:
         for loc in geoCoords:
@@ -42,11 +43,30 @@ def scrapeTweets(search_keys, country, geoCoords):
             c.Hide_output = True
             c.Output = f"./output/{country}/{key}.csv"     # path to csv 
             twint.run.Search(c)
-        
+
+def scrapeTweetsbyUser(search_keys, usernames):
+    # Scrape for each
+    for username in usernames: 
+        for key in search_keys:
+            c = twint.Config()
+            c.Username = username  # variable users
+            c.Search = key       # topic
+            c.Limit = 500      # number of Tweets to scrape
+            c.Store_csv = True       # store tweets in a csv file
+            # c.Show_hashtags = True
+            # c.Since = "2019-5-31"
+            c.Lang = 'en'   # specify english results only
+            c.Hide_output = True
+            c.Output = f"./output/People/{username}.csv"     # path to csv 
+
+            twint.run.Search(c)
+
 if __name__ == "__main__":
     geoCoords = getLocations("US") 
 
+    usernames = ['AtlanticCouncil','CFR_org','jshermcyber']
     # Terms we want to scrape
     search_keys = [ "cyber security", "cybersecurity", "China Canada trade", "Canada China trade", "Canada China relationship", "China Canada relationship"]
-    scrapeTweets(addHashtags(search_keys), "US", geoCoords)
+    # scrapeTweetsbyLoc(addHashtags(search_keys), "US", geoCoords)
+    scrapeTweetsbyUser(addHashtags(search_keys), usernames)
 
