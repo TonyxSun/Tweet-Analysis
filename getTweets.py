@@ -61,12 +61,30 @@ def scrapeTweetsbyUser(search_keys, usernames):
 
             twint.run.Search(c)
 
+def scrapeTweetsEXCEL(search_keys, usernames):
+    # Scrape for each
+    for username in usernames: 
+        for key in search_keys:
+            c = twint.Config()
+            c.Username = username  # variable users
+            c.Search = key       # topic
+            c.Limit = 500      # number of Tweets to scrape
+            c.Store_csv = True       # store tweets in a csv file
+            # c.Show_hashtags = True
+            # c.Since = "2019-5-31"
+            c.Lang = 'en'   # specify english results only
+            c.Hide_output = True
+            c.Output = f"./output/People/KOL_List_CA_US.csv"     # path to csv 
+
+            twint.run.Search(c)
+
 if __name__ == "__main__":
     geoCoords = getLocations("US") 
-
-    usernames = ['AtlanticCouncil','CFR_org','jshermcyber']
+    usernames = ['AtlanticCouncil','CFR_org','CSIS', 'icasDC', 'jshermcyber', "saistype", 'RobertCresanti', 'Dalzell60','GovGaryLocke','ianbremmer', 'ZackCooper', 'chrismeserole', 'MichaelEOHanlon', 'SlaughterAM', 'peterbergencnn', 'SammSacks','gwbstr', 'joshchin', 'lorandlaskai', 'tarah', 'kennedycsis', 'ConStelz', 'GoodmanSherri', 'GotoEastAsia' ,'wendyscutler'  , 'melkgriffith', 'NongHong_ICAS', 'ICAS_Zhang', 'Doug_Bandow' ]
     # Terms we want to scrape
-    search_keys = [ "cyber security", "cybersecurity", "China Canada trade", "Canada China trade", "Canada China relationship", "China Canada relationship"]
+    search_keys = ["Huawei", "5G", "cyber security", "cybersecurity", "China Canada trade", "Canada China trade", "Canada China relationship", "China Canada relationship"]
+
+
     # scrapeTweetsbyLoc(addHashtags(search_keys), "US", geoCoords)
-    scrapeTweetsbyUser(addHashtags(search_keys), usernames)
+    scrapeTweetsEXCEL(addHashtags(search_keys), usernames)
 
