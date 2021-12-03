@@ -1,46 +1,102 @@
 import pandas as pd
 import os
 from nltk.sentiment import SentimentIntensityAnalyzer
-
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+import re
+from wordcloud import WordCloud, STOPWORDS
 
 sia = SentimentIntensityAnalyzer()
 
+
 def combine_df(directory):
-    
+
     frames = []
-    
+
+    # read all csv files in 'output' folder
     for root, dirs, files in os.walk(directory):
         for filename in files:
             if filename.endswith(".csv"):
                 frames.append(pd.read_csv(root + "/" + filename))
-    
-    return pd.concat(frames)['tweet']
+
+    return pd.concat(frames)['tweet']  # get all the 'tweets' and append to df
+
+
+def piechart_sentiment(counts):
+    mask = plt.Circle((0, 0), 0.7, color="white")
+    plt.pie(counts, labels=["Positive", "Negative",
+            "Neutral"], colors=['green', 'blue', 'red'])
+    plt.legend(["Positive", "Negative", "Neutral"])
+    plt.title("Sentiment Analysis Result")
+    p = plt.gcf()
+    p.gca().add_artist(mask)
+    plt.show()
+
 
 def is_positive(tweet):
-    return sia.polarity_scores(tweet)["compound"] > 0
+    return sia.polarity_scores(tweet)
 
-def percent_postive(t):
+'''
+Takes df as input and returns the % of 'positive' tweets.
+'''
+def sentiment_analysis(t):
     total = 0
     positive = 0
-    for index, row in t.items():
+    negative = 0
+    neutral = 0
+    for index, row in t["text"].items():
         tweet = row
         total += 1
-        if is_positive(tweet):
+        score = is_positive(tweet)
+        if score['neg'] > score['pos']:
+            t.loc[index, 'sentiment'] = 'negative'
+            negative += 1
+
+        elif score['pos'] > score['neg']:
+            t.loc[index, 'sentiment'] = 'positive'
             positive += 1
-    
+        else:
+            t.loc[index, 'sentiment'] = 'neutral'
+            neutral += 1
+
+    # display results as a pie chart
+    piechart_sentiment([positive, negative, neutral])
+
     return positive / total
-        
-
-df = combine_df("output")
-print (percent_postive(df))
-    
-    
-    
-    
-    
-
-    
 
 
+def clean_data(df):
+    # remove duplicate tweets
+    df.drop_duplicates(inplace=True)
+
+    # Creating new dataframe and new feature/column to work on
+    tw_list = pd.DataFrame(df)
+    tw_list["text"] = tw_list["tweet"]
+
+    # Removing RT, Punctuation etc
+    def remove_rt(x): return re.sub("RT @\w+: ", " ", x)
+    def rtx(x): return re.sub('[!@#$:).;,?&]', '', x.lower())
+    def rty(x): return re.sub('  ', ' ', x)
+    tw_list["text"] = tw_list.text.map(remove_rt).map(rtx).map(rty)
+    return tw_list
 
 
+def wordcloud(df, col):
+    stopwords = set(STOPWORDS)
+    wordcloud = WordCloud(max_font_size=50, background_color="white",
+                          stopwords=stopwords).generate(" ".join([i for i in df[col]]))
+    plt.figure(figsize=(20, 10), facecolor='k')
+    plt.imshow(wordcloud, interpolation="bilinear")
+    plt.axis("off")
+    plt.title("Word Cloud")
+    wordcloud.to_file("output/cloud.png")
+    # plt.show()
+
+
+if __name__ == '__main__':
+    df = combine_df("output")
+    clean_df = clean_data(df)
+
+    # wordcloud(clean_df, 'text')
+    print(sentiment_analysis(clean_df))
