@@ -75,10 +75,15 @@ def clean_data(df):
     tw_list["text"] = tw_list["tweet"]
 
     # Removing RT, Punctuation etc
+    words = ["Huawei", "5G", "cyber security", "cybersecurity", "China Canada trade", "Canada China trade", "https", "Canada China relationship", "China Canada relationship"]
+    stopwords = " ".join(words)
     def remove_rt(x): return re.sub("RT @\w+: ", " ", x)
+    pattern = re.compile(r'(https?://)?(www\.)?(\w+\.)?(\w+)(\.\w+)(/.+)?')
+    def rthttp(x): return re.sub(pattern,'',x)
     def rtx(x): return re.sub('[!@#$:).;,?&]', '', x.lower())
     def rty(x): return re.sub('  ', ' ', x)
-    tw_list["text"] = tw_list.text.map(remove_rt).map(rtx).map(rty)
+    def rwords(x): return re.sub(stopwords, "", x)
+    tw_list["text"] = tw_list.text.map(rthttp).map(remove_rt).map(rtx).map(rty)
     return tw_list
 
 
@@ -98,5 +103,5 @@ if __name__ == '__main__':
     df = combine_df("output")
     clean_df = clean_data(df)
 
-    # wordcloud(clean_df, 'text')
-    print(sentiment_analysis(clean_df))
+    wordcloud(clean_df, 'text')
+    # print(sentiment_analysis(clean_df))
