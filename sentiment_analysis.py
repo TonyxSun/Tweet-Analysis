@@ -1,9 +1,7 @@
-import pandas as pd
 import os
 from nltk.sentiment import SentimentIntensityAnalyzer
 import matplotlib.pyplot as plt
 import pandas as pd
-import numpy as np
 import re
 from wordcloud import WordCloud, STOPWORDS
 
@@ -61,9 +59,9 @@ def sentiment_analysis(t):
             neutral += 1
 
     # display results as a pie chart
-    piechart_sentiment([positive, negative, neutral])
+    #piechart_sentiment([positive, negative, neutral])
 
-    return positive / total
+    return (positive / total, negative / total, neutral / total)
 
 
 def clean_data(df):
